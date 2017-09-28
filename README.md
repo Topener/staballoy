@@ -1,5 +1,5 @@
 # Staballoy
-Reactive UI improvement for Titanium with event handling
+Reactive UI framework for Titanium Alloy with event handling Edit
 
 Why the name staballoy? Well.. to quote wikipedia
 
