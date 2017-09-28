@@ -1,5 +1,3 @@
-$.close.text = $.args.staballoy.getVar('closeButtonName');
-
 function close(){
     $.getView().close();
 }

@@ -38,6 +38,7 @@ function subscribe(component, $){
     if (!SA || !SA.subscribe || SA.subscribe.length == 0) return;
     _.each(SA.subscribe, function(sub){
         if (!subscribers.hasOwnProperty(sub.var)) subscribers[sub.var] = [];
+        component[sub.attribute] = vars[sub.var];
         subscribers[sub.var].push({"component": component, "attribute": sub.attribute, "window": $.args.eventHandlerGuid});
     });
 }
