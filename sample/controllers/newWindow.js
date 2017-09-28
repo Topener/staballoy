@@ -1,7 +1,6 @@
 function close(){
     $.getView().close();
+    $.args.staballoy.setVar('closeButtonColor', '#000');
 }
-
-console.log($.args.eventHandlerGuid);
 
 $.args.subscribe($.close, $);

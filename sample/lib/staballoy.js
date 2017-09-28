@@ -6,8 +6,9 @@
 
 var requiredControllers = {};
 var activeControllers = [];
-var subscribers = {};
+var subscribers = [];
 var vars = {};
+var currentlyFocussed = false;
 
 Alloy.createController = function(name, args) {
     var args = args || {};
@@ -23,10 +24,13 @@ Alloy.createController = function(name, args) {
     
     var controller = new (requiredControllers[name])(args);
     if (controller.getView().apiName === 'Ti.UI.Window'){
-        
+        controller.getView().addEventListener('focus', handleFocus);
+        controller.getView().addEventListener('close', handleClose);
+        if (!currentlyFocussed){
+            currentlyFocussed = controllerGuid;
+        }
         activeControllers.push({controller: controller, guid: controllerGuid});
         controller.getView().eventHandlerGuid = controllerGuid; 
-        controller.getView().addEventListener('close', handleClose);
     }
     
     
@@ -36,11 +40,23 @@ Alloy.createController = function(name, args) {
 function subscribe(component, $){
     var SA = component.staballoy;
     if (!SA || !SA.subscribe || SA.subscribe.length == 0) return;
+    
     _.each(SA.subscribe, function(sub){
-        if (!subscribers.hasOwnProperty(sub.var)) subscribers[sub.var] = [];
+        
+        // do initial set of value for keeping state
         component[sub.attribute] = vars[sub.var];
-        subscribers[sub.var].push({"component": component, "attribute": sub.attribute, "window": $.args.eventHandlerGuid});
+        
+        subscribers.push({"var": sub.var, "component": component, "attribute": sub.attribute, "window": $.args.eventHandlerGuid});
     });
+}
+
+function handleFocus(e){
+    currentlyFocussed = e.source.eventHandlerGuid;
+    
+    console.log('focussed window', currentlyFocussed);
+    setTimeout(function(){
+        console.log('windows in system', activeControllers.length);
+    },500);
 }
 
 function handleClose(e){
@@ -54,23 +70,23 @@ function handleClose(e){
     controller.destroy();
     activeControllers.splice(index,1);
     
-    stopSubscribersForWindow(e.source.eventHandlerGuid);
+    removeSubscribersForWindow(e.source.eventHandlerGuid);
 }
 
-function stopSubscribersForWindow(guid){
-    //@TODO stop it!
+function removeSubscribersForWindow(guid){
+    subscribers = _.without(subscribers, _.find(subscribers, {'window' : guid}));
 }
 
 function setVar(key, value){
-    if (!vars.hasOwnProperty(key)) vars[key];
     
+    if (!vars.hasOwnProperty(key)) vars[key];
     vars[key] = value;
     
-    if (subscribers[key]){
-        _.each(subscribers[key], function(sub){
-            sub.component[sub.attribute] = value;
-        });
-    }
+    var toUpdate = _.where(subscribers, {"var" : key});
+
+    _.each(toUpdate, function(sub){
+        sub.component[sub.attribute] = value;
+    });
 }
 
 function getVar(key){
