@@ -19,7 +19,7 @@ Alloy.createController = function(name, args) {
     var controllerGuid = guid();
     args.eventHandlerGuid = controllerGuid;
     args.subscribe = subscribe;
-    args.staballoy = {setVar: setVar};
+    args.staballoy = {setVar: setVar, getVar: getVar};
     
     var controller = new (requiredControllers[name])(args);
     if (controller.getView().apiName === 'Ti.UI.Window'){
@@ -33,12 +33,12 @@ Alloy.createController = function(name, args) {
     return controller;
 };
 
-function subscribe(component){
+function subscribe(component, $){
     var SA = component.staballoy;
     if (!SA || !SA.subscribe || SA.subscribe.length == 0) return;
     _.each(SA.subscribe, function(sub){
         if (!subscribers.hasOwnProperty(sub.var)) subscribers[sub.var] = [];
-        subscribers[sub.var].push({component: component, attribute: sub.attribute});
+        subscribers[sub.var].push({"component": component, "attribute": sub.attribute, "window": $.args.eventHandlerGuid});
     });
 }
 
@@ -52,6 +52,12 @@ function handleClose(e){
     controller.off();
     controller.destroy();
     activeControllers.splice(index,1);
+    
+    stopSubscribersForWindow(e.source.eventHandlerGuid);
+}
+
+function stopSubscribersForWindow(guid){
+    //@TODO stop it!
 }
 
 function setVar(key, value){
@@ -66,6 +72,10 @@ function setVar(key, value){
     }
 }
 
+function getVar(key){
+    if (!vars.hasOwnProperty(key)) return null;
+    return vars[key];
+}
 
 function guid() {
     function S4() {
@@ -74,3 +84,8 @@ function guid() {
 
     return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
 }
+
+module.exports = {
+    setVar: setVar,
+    getVar: getVar
+};
