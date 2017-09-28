@@ -1,0 +1,8 @@
+"#close": {
+    staballoy: {
+        subscribe: [{
+            var: "closeButtonName",
+            attribute: "text"
+        }]
+    }
+}
