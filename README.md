@@ -18,6 +18,8 @@ So enough talk, how do I install it? First you need to `staballoy.js` to your `l
 
 Now, this will override `Alloy.createController` so it is not compatible with any other modules/libraries that do the same. Keep this in mind! (barely any modules/library does this, but [Jason Kneens AlloyXL](https://github.com/jasonkneen/AlloyXL) is an example)
 
+Next, staballoy requires a newer underscorejs lib to function, you can do so by downloading the [latest underscorejs](http://underscorejs.org) and putting that in `/lib/alloy/underscore.js`. You can follow [this](https://jira.appcelerator.org/browse/ALOY-1583) ticket on JIRA to monitor when that is done by default.
+
 ## Example
 
 Every controller will have access to a `$.args.subscribe` method as well as `$.args.staballoy` which contains methods to set and get variables stored.
