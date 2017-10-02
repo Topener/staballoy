@@ -37,8 +37,9 @@ Alloy.createController = function(name, args) {
     return controller;
 };
 
-function subscribe(component, $){
+function subscribe(component, $, logicFunction){
     var SA = component.staballoy;
+    
     if (!SA || !SA.subscribe || SA.subscribe.length == 0) return;
     
     _.each(SA.subscribe, function(sub){
@@ -46,7 +47,9 @@ function subscribe(component, $){
         // do initial set of value for keeping state
         component[sub.attribute] = vars[sub.var];
         
-        subscribers.push({"var": sub.var, "component": component, "attribute": sub.attribute, "window": $.args.eventHandlerGuid});
+        var data = {"var": sub.var, "component": component, "attribute": sub.attribute, "window": $.args.eventHandlerGuid};
+        if (logicFunction) data.logicFunction = logicFunction;
+        subscribers.push(data);
     });
 }
 
@@ -85,6 +88,11 @@ function setVar(key, value){
     var toUpdate = _.where(subscribers, {"var" : key});
 
     _.each(toUpdate, function(sub){
+        
+        // if there is a logicFunction, use the value returned by it instead
+        if (sub.logicFunction){
+            return sub.component[sub.attribute] = sub.logicFunction(value);
+        }
         sub.component[sub.attribute] = value;
     });
 }

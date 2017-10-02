@@ -2,7 +2,7 @@ var i = 0;
 
 setInterval(function(){
     i++;
-    $.args.staballoy.setVar('closeButtonName', 'close now - ' + i);
+    $.args.staballoy.setVar('closeButtonName', i);
 }, 500);
 
 function doClick(e) {

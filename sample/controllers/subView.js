@@ -1,2 +1,4 @@
-// Arguments passed into this controller can be accessed via the `$.args` object directly or:
-var args = $.args;
+
+$.args.subscribe($.getView(), $, function(val){
+    return !(val % 10);
+});
