@@ -4,15 +4,4 @@
 }
 
 "#close": {
-    staballoy: {
-        subscribe: [{
-            var: "closeButtonName",
-            attribute: "text"
-        },
-        {
-            var: "closeButtonColor",
-            attribute: "color"
-        }
-        ]
-    }
 }

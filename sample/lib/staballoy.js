@@ -18,12 +18,18 @@ Alloy.createController = function(name, args) {
         requiredControllers[name] = require("/alloy/controllers/" + name);
     }
     var controllerGuid = guid();
-    args.eventHandlerGuid = controllerGuid;
-    args.subscribe = subscribe;
     args.staballoy = {setVar: setVar, getVar: getVar};
+    args.subscribe = subscribe;
     
-    var controller = new (requiredControllers[name])(args);
-    if (controller.getView().apiName === 'Ti.UI.Window'){
+    var controller;
+    
+    if (new (requiredControllers[name])(args).getView().apiName === 'Ti.UI.Window'){
+
+        args.subscribe = subscribe;
+        args.eventHandlerGuid = controllerGuid;
+        
+        // recreate controller with right args
+        controller = new (requiredControllers[name])(args);
         controller.getView().addEventListener('focus', handleFocus);
         controller.getView().addEventListener('close', handleClose);
         if (!currentlyFocussed){
@@ -31,25 +37,33 @@ Alloy.createController = function(name, args) {
         }
         activeControllers.push({controller: controller, guid: controllerGuid});
         controller.getView().eventHandlerGuid = controllerGuid; 
+    } else {
+        controller = new (requiredControllers[name])(args);
     }
     
     
     return controller;
 };
 
-function subscribe(component, $, logicFunction){
-    var SA = component.staballoy;
+function subscribeNonWindow(component, $, subscriptions, logicFunction){
+    console.warn('NON WINDOW SUBSCRIBE');
+    console.log($.args.__parentSymbol);
+}
+
+function subscribe(args){
     
-    if (!SA || !SA.subscribe || SA.subscribe.length == 0) return;
+    if (!args.subscriptions || args.subscriptions.length == 0) return;
     
-    _.each(SA.subscribe, function(sub){
-        
-        // do initial set of value for keeping state
-        component[sub.attribute] = vars[sub.var];
-        
-        var data = {"var": sub.var, "component": component, "attribute": sub.attribute, "window": $.args.eventHandlerGuid};
-        if (logicFunction) data.logicFunction = logicFunction;
-        subscribers.push(data);
+    _.each(args.subscriptions, function(sub){
+        _.each(sub, function(attribute, variable){
+            args.component[attribute] = vars[variable];
+
+
+            var data = {"var": variable, "component": args.component, "attribute": attribute, "window": args.window.args.eventHandlerGuid};
+            if (args.logicFunction) data.logicFunction = args.logicFunction;
+            subscribers.push(data);
+
+        });        
     });
 }
 
@@ -91,7 +105,7 @@ function setVar(key, value){
         
         // if there is a logicFunction, use the value returned by it instead
         if (sub.logicFunction){
-            return sub.component[sub.attribute] = sub.logicFunction(value);
+            return sub.component[sub.attribute] = sub.logicFunction(value, key, sub.attribute);
         }
         sub.component[sub.attribute] = value;
     });
