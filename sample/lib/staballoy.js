@@ -13,53 +13,43 @@ var currentlyFocussed = false;
 Alloy.createController = function(name, args) {
     var args = args || {};
     
-    console.log('creating controller', name);
     if (!requiredControllers[name]){
         requiredControllers[name] = require("/alloy/controllers/" + name);
     }
     var controllerGuid = guid();
-    args.staballoy = {setVar: setVar, getVar: getVar};
+    args.staballoy = {setVar: setVar, getVar: getVar, guid: controllerGuid};
     args.subscribe = subscribe;
+    var controller = new (requiredControllers[name])(args);
     
-    var controller;
-    
-    if (new (requiredControllers[name])(args).getView().apiName === 'Ti.UI.Window'){
-
-        args.subscribe = subscribe;
-        args.eventHandlerGuid = controllerGuid;
-        
-        // recreate controller with right args
-        controller = new (requiredControllers[name])(args);
+    if (isSubscribable(controller.getView().apiName)){
+	    activeControllers.push({controller: controller, guid: controllerGuid});
         controller.getView().addEventListener('focus', handleFocus);
         controller.getView().addEventListener('close', handleClose);
+
         if (!currentlyFocussed){
             currentlyFocussed = controllerGuid;
         }
-        activeControllers.push({controller: controller, guid: controllerGuid});
-        controller.getView().eventHandlerGuid = controllerGuid; 
-    } else {
-        controller = new (requiredControllers[name])(args);
     }
-    
     
     return controller;
 };
 
-function subscribeNonWindow(component, $, subscriptions, logicFunction){
-    console.warn('NON WINDOW SUBSCRIBE');
-    console.log($.args.__parentSymbol);
-}
-
 function subscribe(args){
-    
+    if (!isSubscribable(args.window.getView().apiName)){
+    	return console.error('subscription not possible without context window');
+    }
     if (!args.subscriptions || args.subscriptions.length == 0) return;
     
     _.each(args.subscriptions, function(sub){
         _.each(sub, function(attribute, variable){
-            args.component[attribute] = vars[variable];
+        	if (args.logicFunction && vars[variable]){
+	            args.component[attribute] = args.logicFunction(vars[variable], variable, attribute);
+        	} else {
+	            args.component[attribute] = vars[variable];
+        	}
 
 
-            var data = {"var": variable, "component": args.component, "attribute": attribute, "window": args.window.args.eventHandlerGuid};
+            var data = {"var": variable, "component": args.component, "attribute": attribute, "window": args.window.args.staballoy.guid};
             if (args.logicFunction) data.logicFunction = args.logicFunction;
             subscribers.push(data);
 
@@ -69,11 +59,6 @@ function subscribe(args){
 
 function handleFocus(e){
     currentlyFocussed = e.source.eventHandlerGuid;
-    
-    console.log('focussed window', currentlyFocussed);
-    setTimeout(function(){
-        console.log('windows in system', activeControllers.length);
-    },500);
 }
 
 function handleClose(e){
@@ -114,6 +99,10 @@ function setVar(key, value){
 function getVar(key){
     if (!vars.hasOwnProperty(key)) return null;
     return vars[key];
+}
+
+function isSubscribable(apiName){
+	return apiName === 'Ti.UI.Window' || apiName === 'Ti.UI.iOS.NavigationWindow' || apiName === 'Ti.UI.TabGroup';
 }
 
 function guid() {
