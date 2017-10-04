@@ -12,72 +12,104 @@ Staballoy injects itself in every controller and can handle monitoring of variab
 
 ## Setup
 
-So enough talk, how do I install it? First you need to `staballoy.js` to your `lib` folder and require it in `alloy.js`
+So enough talk, how do I install it? First download the latest release (from the dist folder) and install it as a commonjs module.
 
-    var staballoy = require('/staballoy');
+    <modules>
+        <module platform="commonjs" version="0.1">staballoy</module>
+    </modules>
+    
+Next, require staballoy in your `alloy.js` file.
+
+    var staballoy = require('staballoy');
 
 Now, this will override `Alloy.createController` so it is not compatible with any other modules/libraries that do the same. Keep this in mind! (barely any modules/library does this, but [Jason Kneens AlloyXL](https://github.com/jasonkneen/AlloyXL) is an example)
 
 Next, staballoy _**requires**_ a newer underscorejs lib to function, you can do so by downloading the [latest underscorejs](http://underscorejs.org) and putting that in `/lib/alloy/underscore.js`. You can follow [this](https://jira.appcelerator.org/browse/ALOY-1583) ticket on JIRA to monitor when that is done by default.
 
-## Example
+## Supported controllers
 
-Every controller will have access to a `$.args.subscribe` method as well as `$.args.staballoy` which contains methods to set and get variables stored.
+Every Window controller will have access to a `$.args.subscribe` method as well as `$.args.staballoy` which contains methods to set and get variables stored. The current supported controller types are
 
-You can set a variable like this:
+- Ti.UI.Window
+- Ti.UI.TabGroup
+- Ti.UI.iOS.NavigationWindow
+
+Staballoy automatically removes subscriptions based on the `close` event of these UI elements. If it wouldn't be able to do this there would be memory leaks. It is important to only use Windows that are created by alloy!
+
+## Variables
+
+You can set variables stored in staballoy. Any variable set are single session. There is no storage. Therefore staballoy should not be used as storage. Keep that in mind when using it. 
+
+You can `set` and `get` variables in any Alloy created controller, as it will have the following methods exposed:
 
     $.args.staballoy.setVar('myVarName', 'value');
-    
-Next to `setVar` there of course is also a `getVar` method
-
     var value = $.args.staballoy.getVar('myVarName');
     
-Now for the interesting stuff. Lets subscribe to a variable! In this case, we'll subscribe to `myVarName` and put it for the `text` property of a label.
+Thats all you need to do to update variables. Again, if you want to store the data you should handle the storage of it, and init the right data when starting the app, in `alloy.js` for example, or better in a library file (eg. `/lib/initStaballoy.js`) called from `alloy.js`
 
-So in any controller, you subscribe like this. First argument is the UI component you want to a subscription on, the second is the `$`. This is needed to now context and so staballoy can keep memory clean.
+## Subscribe
+Any of the supported controllers (listed above) has access to the `$.args.subscribe` method. The subscribe method accepts a dictionary.
 
-    $.args.subscribe($.myLabel, $);
+    $.args.subscribe({
+        'component' : $.myLabel,
+        'window' : $,
+        'subscriptions' : {'closeButtonName': 'text'},
+    });
+
+**component** - The UI element you want updated
+**window** - The window the UI element is in, this needs to be an alloy generated window, so usually `$` is enough
+**subscriptions** - An object of subscriptions. In this example I am subscribing to the `closeButtonName` variable, and I want the `text` attribute to be set with the value that is contained in the variable
+
+Internally, every time the `closeButtonName` variable is updated, the following code is executed: `$.myLabel.text = closeButtonName;`
+
+### Using setters
+Instead of using an attribute, you can also use the setters. So if you provide the following for subscriptions:
+
+        'subscriptions' : {'closeButtonName': 'setText'},
+
+This will internally be translated to: `$.myLabel.setText(closeButtonName)`
+
+### Manipulating the data that is being set
+So want to alter the data of the variable before it being set you can use the `logicFunction`. It can be really powerfull if you store objects in staballoy. You can do that as following:
+
+
+    $.args.staballoy.setVar('closeButtonStuff', {"id" : 5, "key": "buttonTitle"});
     
-What it subscribes to exactly you can define in `tss` like this:
-
-    "#myLabel": {
-        staballoy: {
-            subscribe: [{
-                var: "myVarName",
-                attribute: "text"
-            }]
+    $.args.subscribe({
+        'component' : $.myLabel,
+        'window' : $,
+        'subscriptions' : {'closeButtonName': 'text'},
+        'logicFunction' : function(value) {
+            return L(value.key);
         }
-    }
-
-As you can see, the `subscribe` object in `tss` accepts an array, so multiple variables can be monitored for multiple properties of a single UI component.
-
-## Logic functions
-Instead of wanting to use the exact data stored in the variable, you might also want to use the data provided to do something else with it?
-
-An example, lets say we monitor geolocation and its accuracy, and we want to display a warning to the user if the accuracy is higher than 50 (inaccurate, the lower the better).
-
-    // some controller
-    Ti.Geolocation.addEventListener('location', locationCallback);
-
-    function locationCallback(e){
-        if (e.coords){
-            staballoy.setVar('geoAccuracy', e.coords.accuracy);
-        }
-    }
-    
-    // subscriber controller
-    $.args.subscribe($.warningLabel, $, function(value){
-        return value >= 50;
     });
     
-    // subscriber tss
+Now, you can use part of an object to set the value of your UI component automatically. An example for visibilty of an object based on an integer you can find in the sample app.
     
-    "#warningLabel": {
-        staballoy: {
-            subscribe: [{
-                var: "geoAccuracy",
-                attribute: "visible"
-            }]
-        }
-    }    
+### Subscribe in other controllers
+
+If you want to subscribe from controllers other than the supported ones you should use an exported function in the sub-controller, and use the main controller (a window) to subscribe. An example of this is included in the sample app. 
+
+    // index.js
+    $.args.subscribe({
+        'component' : $.subView,
+        'window' : $,
+        'subscriptions' : {'closeButtonName': 'setVisible'}
+    });
     
+`$.subView` is a `<Require>` in `index.xml`. 
+
+		<Require src="subView" id="subView"></Require>
+
+As I'm using the `setVisible` property, I can have an exported function in `subView.js` so that can be called.
+
+    exports.setVisible = function(value){
+        $.getView().visible = value;
+    };
+
+# Missing features / bugs / questions?
+For missing features and bugs, please submit a ticket, or even better submit a Pull Request. 
+
+If you have any questions, just contact me on [TiSlack](http://tislack.org). My name there is @Wraldpyk.
+
+Want to support my work? Consider supporting me on [Patreon](https://www.patreon.com/wraldpyk), or send a donation my way via the PayPal button on [TiSlack.org](http://tislack.org). Any support is appreciated.
