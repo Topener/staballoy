@@ -12,4 +12,13 @@ function doClick(e) {
 	},2500);
 }
 
+$.args.subscribe({
+    'component' : $.subView,
+    'window' : $,
+    'subscriptions' : {'closeButtonName': 'setVisible'},
+    'logicFunction' : function(value, variable, property) {
+        return !(value % 10);
+    }
+});
+
 $.index.open();

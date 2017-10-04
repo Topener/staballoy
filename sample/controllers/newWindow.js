@@ -7,5 +7,5 @@ function close() {
 $.args.subscribe({
     'component' : $.close,
     'window' : $,
-    'subscriptions': [{'closeButtonColor' : 'color'}, {'closeButtonName': 'text'}]
+    'subscriptions': {'closeButtonColor' : 'color', 'closeButtonName': 'text'}
 });
