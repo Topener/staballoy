@@ -1,1 +1,1 @@
-require('/staballoy');
+require('staballoy');
