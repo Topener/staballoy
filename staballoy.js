@@ -1,5 +1,6 @@
 /**
  * Staballoy is created by Rene Pot (2017)
+ * Version 0.2 -- 2017-10-12
  * It extends alloy to add reactive components to Titanium.
  * The latest version can be found at Github: https://github.com/topener/staballoy
  */
