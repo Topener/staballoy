@@ -48,7 +48,26 @@ You can `set` and `get` variables in any Alloy created controller, as it will ha
 Thats all you need to do to update variables. Again, if you want to store the data you should handle the storage of it, and init the right data when starting the app, in `alloy.js` for example, or better in a library file (eg. `/lib/initStaballoy.js`) called from `alloy.js`
 
 ## Subscribe
-Any of the supported controllers (listed above) has access to the `$.args.subscribe` method. The subscribe method accepts a dictionary.
+Any of the supported controllers will be automatically parsed and checked for subscriptions. These subscriptions can be configured in the tss file. Say we have a label
+
+    <Label id="myLabel" />
+    
+And you want to subscribe the text property to the variable `closeButtonName`. You can do that by putting the following in tss
+
+    "#test": {
+        staballoy: {
+            subscriptions: {
+                "closeButtonName": "text"
+            }
+        }
+    }
+
+The subscriptions object specifies what to subscribe to and to what attribute. In this example I am subscribing to the `closeButtonName` variable, and I want the `text` attribute to be set with the value that is contained in the variable. Multiple subscriptions are possible for every element.
+
+Internally, every time the `closeButtonName` variable is updated, the following code is executed: `$.myLabel.text = closeButtonName;`
+
+## Manual Subscribe
+If you don't want to subscribe in the tss but want to do it more dynamically, in the controller, you can do it as follows:
 
     $.args.subscribe({
         'component' : $.myLabel,
@@ -56,11 +75,13 @@ Any of the supported controllers (listed above) has access to the `$.args.subscr
         'subscriptions' : {'closeButtonName': 'text'},
     });
 
+The object consists of:
+
 **component** - The UI element you want updated
 **window** - The window the UI element is in, this needs to be an alloy generated window, so usually `$` is enough
-**subscriptions** - An object of subscriptions. In this example I am subscribing to the `closeButtonName` variable, and I want the `text` attribute to be set with the value that is contained in the variable
+**subscriptions** - As explained above.
 
-Internally, every time the `closeButtonName` variable is updated, the following code is executed: `$.myLabel.text = closeButtonName;`
+As you can see this flow is the same as the earlier one, but it is a little more complex as it needs to know the context.
 
 ### Using setters
 Instead of using an attribute, you can also use the setters. So if you provide the following for subscriptions:
