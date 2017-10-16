@@ -77,9 +77,9 @@ If you don't want to subscribe in the tss but want to do it more dynamically, in
 
 The object consists of:
 
-**component** - The UI element you want updated
-**window** - The window the UI element is in, this needs to be an alloy generated window, so usually `$` is enough
-**subscriptions** - As explained above.
+- **component** - The UI element you want updated
+- **window** - The window the UI element is in, this needs to be an alloy generated window, so usually `$` is enough
+- **subscriptions** - As explained above.
 
 As you can see this flow is the same as the earlier one, but it is a little more complex as it needs to know the context.
 
@@ -96,16 +96,23 @@ So want to alter the data of the variable before it being set you can use the `l
 
     $.args.staballoy.setVar('closeButtonStuff', {"id" : 5, "key": "buttonTitle"});
     
-    $.args.subscribe({
-        'component' : $.myLabel,
-        'window' : $,
-        'subscriptions' : {'closeButtonName': 'text'},
-        'logicFunction' : function(value) {
-            return L(value.key);
-        }
-    });
+You then set the logicFunction has a string. This is of course a property in the tss, but can also be specified in the manual flow
     
-Now, you can use part of an object to set the value of your UI component automatically. An example for visibilty of an object based on an integer you can find in the sample app.
+    logicFunction: "myLogicFunction"
+    
+Then, you can add the logicFunction to the `$` nameSpace in the controller
+
+    $.myLogicFunction = function(value){
+    	return L(value.key);
+    };
+    
+In the manual approach you can, instead of a string to the `$` namespace, you can also add in the function directly, so it can also be an anonymous function
+
+    logicFunction: function(value){
+        return L(value.key);
+    }
+    
+Now, you can use part of an object to set the value of your UI component automatically. Another example for visibilty of an object based on an integer you can find in the sample app.
     
 ### Subscribe in other controllers
 
@@ -127,6 +134,8 @@ As I'm using the `setVisible` property, I can have an exported function in `subV
     exports.setVisible = function(value){
         $.getView().visible = value;
     };
+    
+>> This flow is not really optimal so expect it to change in the future with a non-backwards compatible implementation. Suggestions for the new flow are welcome.
 
 # Missing features / bugs / questions?
 For missing features and bugs, please submit a ticket, or even better submit a Pull Request. 
