@@ -54,7 +54,7 @@ Any of the supported controllers will be automatically parsed and checked for su
     
 And you want to subscribe the text property to the variable `closeButtonName`. You can do that by putting the following in tss
 
-    "#test": {
+    "#myLabel": {
         staballoy: {
             subscriptions: {
                 "closeButtonName": "text"
