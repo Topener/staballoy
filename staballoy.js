@@ -112,18 +112,18 @@ function handleFocus(e){
     currentlyFocussed = e.source.guid;
 }
 
-function getWindowById(guid){
-    var index = _.findIndex(activeControllers, function(c){
+function getWindowIndexById(guid){
+    return _.findIndex(activeControllers, function(c){
         return c.guid == guid;
     });
-    return activeControllers[index].controller;
 }
 
 /**
  * Callback method on the close event listener
  */
 function handleClose(e){
-    var controller = getWindowById(e.source.guid);
+    var index = getWindowIndexById(e.source.guid);
+    var controller = activeControllers[index].controller;
     controller.getView().removeEventListener('close', handleClose);
     controller.off();
     controller.destroy();
