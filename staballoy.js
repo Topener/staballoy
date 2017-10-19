@@ -28,7 +28,11 @@ Alloy.createController = function(name, args) {
     
     // only parse through all subscribable components
     if (isSubscribable(controller.getView().apiName)){
-        parseChildren(controller.getView().children, controller);
+    	if (controller.getView().apiName == 'Ti.UI.iOS.NavigationWindow'){
+	        parseChildren(controller.getView().window.children, controller);
+    	} else {
+	        parseChildren(controller.getView().children, controller);
+    	}
         activeControllers.push({controller: controller, guid: controllerGuid});
         controller.getView().addEventListener('focus', handleFocus);
         controller.getView().addEventListener('close', handleClose);
@@ -46,7 +50,6 @@ Alloy.createController = function(name, args) {
  */
 function parseChildren(children, controller){
     _.each(children, function(child){
-        
         if (child.children && child.children.length > 0){
             parseChildren(child.children, controller);
             if (child.staballoy){
