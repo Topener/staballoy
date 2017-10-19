@@ -1,6 +1,6 @@
 /**
  * Staballoy is created by Rene Pot (2017)
- * Version 0.2 -- 2017-10-12
+ * Version 0.2.1 -- 2017-10-19
  * It extends alloy to add reactive components to Titanium.
  * The latest version can be found at Github: https://github.com/topener/staballoy
  */
@@ -46,17 +46,18 @@ Alloy.createController = function(name, args) {
  */
 function parseChildren(children, controller){
     _.each(children, function(child){
+        
         if (child.children && child.children.length > 0){
             parseChildren(child.children, controller);
-            
             if (child.staballoy){
                 parseSubscriptions(child, controller);
             }
-            
-        } else {
-            if (child.staballoy){
-                parseSubscriptions(child, controller);
-            }
+        } else if (child.sections && child.sections.length > 0){
+        	parseChildren(child.sections, controller);
+        }
+        
+        if (child.staballoy){
+            parseSubscriptions(child, controller);
         }
     });
 }
@@ -65,6 +66,7 @@ function parseChildren(children, controller){
  * parse through all subscriptions of the component
  */
 function parseSubscriptions(elem, controller){
+	
     if (!elem.staballoy.subscriptions || elem.staballoy.subscriptions.length == 0) return;
     _.each(elem.staballoy.subscriptions, function(attribute, variable){
         
