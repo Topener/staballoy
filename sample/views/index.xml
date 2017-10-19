@@ -1,6 +1,12 @@
 <Alloy>
-	<Window class="container">
-		<Label id="label" onClick="doClick">Hello, World</Label>
-		<Require src="subView" id="subView"></Require>
-	</Window>
+	<NavigationWindow id="navWin">
+		<Window class="container" id="mainWindow">
+			<RightNavButton>
+				<Button onClick="addItem">+</Button>
+			</RightNavButton>
+			<ListView id="listData">
+				<ListSection id="todoItems"></ListSection>
+			</ListView>
+		</Window>
+	</NavigationWindow>
 </Alloy>

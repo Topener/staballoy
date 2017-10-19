@@ -1,17 +1,21 @@
 ".container": {
-	backgroundColor:"white",
-	layout: 'vertical'
+	backgroundColor:"white"
 }
 
-"Label": {
-	width: Ti.UI.SIZE,
-	height: Ti.UI.SIZE,
-	color: "#000",
-	top: 100
+"#mainWindow": {
+	staballoy: {
+		subscriptions: {
+			"todoItems": "setTitle"
+		},
+		logicFunction: "windowTitleParser"
+	}
 }
 
-"#label": {
-	font: {
-		fontSize: 12
+"#todoItems": {
+	staballoy: {
+		subscriptions: {
+			"todoItems": "setItems"
+		},
+		logicFunction: "parseTodoItems"
 	}
 }

@@ -1,24 +1,18 @@
-var i = 0;
+$.parseTodoItems = function(val){
+	if (!val || val.length === 0) return;
+	var items = [];
+	_.each(val, function(item){
+		items.push({properties: {title: item}});
+	});
+	return items;
+};
 
-setInterval(function(){
-    i++;
-    $.args.staballoy.setVar('closeButtonName', i);
-}, 500);
+$.windowTitleParser = function(items){
+	return items.length + " todo items";
+};
 
-function doClick(e) {
-	Alloy.createController('newWindow').getView().open();
-	setTimeout(function(){
-	    $.args.staballoy.setVar('closeButtonColor', 'red');
-	},2500);
+function addItem(){
+	$.navWin.openWindow(Alloy.createController('newitem').getView());
 }
 
-$.args.subscribe({
-    'component' : $.subView,
-    'window' : $,
-    'subscriptions' : {'closeButtonName': 'setVisible'},
-    'logicFunction' : function(value, variable, property) {
-        return !(value % 10);
-    }
-});
-
-$.index.open();
+$.getView().open();

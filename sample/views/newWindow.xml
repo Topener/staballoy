@@ -1,5 +1,0 @@
-<Alloy>
-	<Window class="container">
-	    <Label id="close" text="close" onClick="close" />
-	</Window>
-</Alloy>

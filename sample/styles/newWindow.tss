@@ -1,7 +1,0 @@
-"Window": {
-    modal: true,
-    backgroundColor: "#fff"
-}
-
-"#close": {
-}
