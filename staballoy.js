@@ -29,7 +29,7 @@ Alloy.createController = function(name, args) {
     // only parse through all subscribable components
     if (isSubscribable(controller.getView().apiName)){
     	if (controller.getView().apiName == 'Ti.UI.iOS.NavigationWindow'){
-	        parseChildren(controller.getView().window.children, controller);
+	        parseChildren([controller.getView().window], controller);
     	} else {
 	        parseChildren(controller.getView().children, controller);
     	}
