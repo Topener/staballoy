@@ -135,7 +135,7 @@ As I'm using the `setVisible` property, I can have an exported function in `subV
         $.getView().visible = value;
     };
     
->> This flow is not really optimal so expect it to change in the future with a non-backwards compatible implementation. Suggestions for the new flow are welcome.
+> This flow is not really optimal so expect it to change in the future with a non-backwards compatible implementation. Suggestions for the new flow are welcome.
 
 # Missing features / bugs / questions?
 For missing features and bugs, please submit a ticket, or even better submit a Pull Request. 
