@@ -143,3 +143,9 @@ For missing features and bugs, please submit a ticket, or even better submit a P
 If you have any questions, just contact me on [TiSlack](http://tislack.org). My name there is @Wraldpyk.
 
 Want to support my work? Consider supporting me on [Patreon](https://www.patreon.com/wraldpyk), or send a donation my way via the PayPal button on [TiSlack.org](http://tislack.org). Any support is appreciated.
+
+## Changelog
+
+- **0.2.1** - (20171019) Added support for NavigationWindows & ListSections. Fixed elements with children not being able to subscribe
+- **0.2** - (20171012) Added direct subscribers from tss instead of controllers
+- **0.1** - (20170928) First release
