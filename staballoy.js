@@ -33,6 +33,9 @@ Alloy.createController = function(name, args) {
     	} else {
 	        parseChildren(controller.getView().children, controller);
     	}
+    	if (controller.getView().staballoy){
+	    	parseSubscriptions(controller.getView(), controller);
+    	}
         activeControllers.push({controller: controller, guid: controllerGuid});
         controller.getView().addEventListener('focus', handleFocus);
         controller.getView().addEventListener('close', handleClose);
@@ -50,7 +53,7 @@ Alloy.createController = function(name, args) {
  */
 function parseChildren(children, controller){
     _.each(children, function(child){
-        if (child.children && child.children.length > 0){
+    	if (child.children && child.children.length > 0){
             parseChildren(child.children, controller);
             if (child.staballoy){
                 parseSubscriptions(child, controller);
@@ -69,7 +72,6 @@ function parseChildren(children, controller){
  * parse through all subscriptions of the component
  */
 function parseSubscriptions(elem, controller){
-	
     if (!elem.staballoy.subscriptions || elem.staballoy.subscriptions.length == 0) return;
     _.each(elem.staballoy.subscriptions, function(attribute, variable){
         
