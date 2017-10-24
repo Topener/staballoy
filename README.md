@@ -146,7 +146,7 @@ Want to support my work? Consider supporting me on [Patreon](https://www.patreon
 
 ## Changelog
 
-- **0.2.1** - (20171024) Subscriptions of top most element weren't processed. Now they are!
+- **0.2.2** - (20171024) Subscriptions of top most element weren't processed. Now they are!
 - **0.2.1** - (20171019) Added support for NavigationWindows & ListSections. Fixed elements with children not being able to subscribe
 - **0.2** - (20171012) Added direct subscribers from tss instead of controllers
 - **0.1** - (20170928) First release
