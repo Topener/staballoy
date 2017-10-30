@@ -1,6 +1,6 @@
 /**
  * Staballoy is created by Rene Pot (2017)
- * Version 0.2.2 -- 2017-10-24
+ * Version 0.2.3 -- 2017-10-30
  * It extends alloy to add reactive components to Titanium.
  * The latest version can be found at Github: https://github.com/topener/staballoy
  */
@@ -148,7 +148,9 @@ function removeSubscribersForWindow(guid){
  * Set variable in staballoy and trigger update throughout all subscribers
  */
 function setVar(key, value){
-    
+    if (_.isEqual(getVar(key), value)){
+    	return false;
+    }
     if (!vars.hasOwnProperty(key)) vars[key];
     vars[key] = value;
     
