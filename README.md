@@ -116,7 +116,19 @@ Now, you can use part of an object to set the value of your UI component automat
     
 ### Subscribe in other controllers
 
-If you want to subscribe from controllers other than the supported ones you should use an exported function in the sub-controller, and use the main controller (a window) to subscribe. An example of this is included in the sample app. 
+The preferred method would be to pass the window GUID to the child controller, so you can pass the guid in the manual subscribe method inside a sub-controller
+
+    // index.js
+    Alloy.createController('mySubController', {parentGuid: $.args.staballoy.guid});
+    
+    // mySubController
+    $.args.subscribe({
+        window: $.args.parentGuid
+    });
+
+In case you create the controller inside an XML, you should create a setter and start subscribing after the setter has been called. 
+
+You could also use an exported function in the sub-controller, and use the main controller (a window) to subscribe. An example of this is included in the sample app.
 
     // index.js
     $.args.subscribe({
@@ -146,6 +158,7 @@ Want to support my work? Consider supporting me on [Patreon](https://www.patreon
 
 ## Changelog
 
+- **0.2.4** - (20171205) Add the ability to manual subscribe with a guid instead of a window.
 - **0.2.3** - (20171030) Ignoring the setVar function call if the new value is the same as the stored one
 - **0.2.2** - (20171024) Subscriptions of top most element weren't processed. Now they are!
 - **0.2.1** - (20171019) Added support for NavigationWindows & ListSections. Fixed elements with children not being able to subscribe
