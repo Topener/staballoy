@@ -1,6 +1,6 @@
 /**
  * Staballoy is created by Rene Pot (2017)
- * Version 0.2.3 -- 2017-10-30
+ * Version 0.2.4 -- 2017-12-05
  * It extends alloy to add reactive components to Titanium.
  * The latest version can be found at Github: https://github.com/topener/staballoy
  */
@@ -28,14 +28,14 @@ Alloy.createController = function(name, args) {
     
     // only parse through all subscribable components
     if (isSubscribable(controller.getView().apiName)){
-    	if (controller.getView().apiName == 'Ti.UI.iOS.NavigationWindow'){
-	        parseChildren([controller.getView().window], controller);
-    	} else {
-	        parseChildren(controller.getView().children, controller);
-    	}
-    	if (controller.getView().staballoy){
-	    	parseSubscriptions(controller.getView(), controller);
-    	}
+        if (controller.getView().apiName == 'Ti.UI.iOS.NavigationWindow'){
+            parseChildren([controller.getView().window], controller);
+        } else {
+            parseChildren(controller.getView().children, controller);
+        }
+        if (controller.getView().staballoy){
+            parseSubscriptions(controller.getView(), controller);
+        }
         activeControllers.push({controller: controller, guid: controllerGuid});
         controller.getView().addEventListener('focus', handleFocus);
         controller.getView().addEventListener('close', handleClose);
@@ -53,13 +53,13 @@ Alloy.createController = function(name, args) {
  */
 function parseChildren(children, controller){
     _.each(children, function(child){
-    	if (child.children && child.children.length > 0){
+        if (child.children && child.children.length > 0){
             parseChildren(child.children, controller);
             if (child.staballoy){
                 parseSubscriptions(child, controller);
             }
         } else if (child.sections && child.sections.length > 0){
-        	parseChildren(child.sections, controller);
+            parseChildren(child.sections, controller);
         }
         
         if (child.staballoy){
@@ -96,6 +96,11 @@ function parseSubscriptions(elem, controller){
  * The in-controller exposed subscribe method
  */
 function subscribe(args){
+    
+    if (typeof args.window == 'string' && getWindowIndexById(args.window) > -1){
+        args.window = activeControllers[getWindowIndexById(args.window)].controller;
+    }
+    
     if (!isSubscribable(args.window.getView().apiName)){
         return console.error('subscription not possible without context window');
     }
@@ -149,7 +154,7 @@ function removeSubscribersForWindow(guid){
  */
 function setVar(key, value){
     if (_.isEqual(getVar(key), value)){
-    	return false;
+        return false;
     }
     if (!vars.hasOwnProperty(key)) vars[key];
     vars[key] = value;
