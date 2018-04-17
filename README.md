@@ -18,6 +18,14 @@ So enough talk, how do I install it? First download the latest release (from the
         <module platform="commonjs" version="0.1">staballoy</module>
     </modules>
     
+### Through NPM
+In classic go to the `Resources` folder, for **Alloy** go to the `lib` directory of your project, then run the following command
+
+`npm install staballoy`
+_Note: if your app doesn't have `node_modules` yet, run `npm init` first!_
+
+### Include it in your application
+
 Next, require staballoy in your `alloy.js` file.
 
     var staballoy = require('staballoy');
