@@ -175,7 +175,6 @@ function removeSubscribersForWindow(guid) {
     _.each(toRemove, function(r) {
         var removed = subscribers.splice(subscribers.indexOf(r), 1);
         if (removed && removed[0] && removed[0].valueListener) {
-            console.warn('remove value listener', removed[0]);
             removed[0].component.removeEventListener('value', valueChange);
         }
     });
@@ -217,7 +216,7 @@ function setVar(key, value, sourceguid) {
     });
     
     var toUpdate = _.filter(subscribers, function(sub){
-        if (sub.var.indexOf(key) === 0) return true;
+        if (sub.var.indexOf(key + '_') === 0) return true;
         if (options.indexOf(sub.var) > -1) return true;
         return false;
     });
