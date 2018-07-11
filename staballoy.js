@@ -74,10 +74,16 @@ function parseChildren(children, controller){
  */
 function parseSubscriptions(elem, controller){
     if (!elem.staballoy.subscriptions || elem.staballoy.subscriptions.length == 0) return;
+    
+    // subscriptions have already been created. Don't do it again
+    if (elem.staballoy.guid) return;
+    
     _.each(elem.staballoy.subscriptions, function(attribute, variable){
-        
+        var subscriberId = elem.staballoy.guid || guid();
         // create a subscription model
-        var data = {"var": variable,  "component": elem, "attribute": attribute, "window": controller.args.staballoy.guid};
+        var data = {"var": variable,  "component": elem, "attribute": attribute, "window": controller.args.staballoy.guid, guid: subscriberId};
+        elem.staballoy.guid = subscriberId;
+        
         if (elem.staballoy.logicFunction){
             if (typeof elem.staballoy.logicFunction == 'string'){
                 
@@ -104,7 +110,7 @@ function valueChange(e) {
     if (e.source && e.source.staballoy) {
         _.each(e.source.staballoy.subscriptions, function(attribute, variable) {
             if (attribute === 'value') {
-                setVar(variable, e.source.value);
+                setVar(variable, e.source.value, e.source.staballoy.guid);
             }
         });
     }
@@ -179,7 +185,7 @@ function removeSubscribersForWindow(guid) {
  * Set variable in staballoy and trigger update throughout all subscribers
  */
 
-function setVar(key, value) {
+function setVar(key, value, sourceguid) {
     function setVal(path, val) {
         var schema = vars;
         var pList = path.split('_');
@@ -206,7 +212,9 @@ function setVar(key, value) {
         "var" : key
     });
     _.each(toUpdate, function(sub) {
-        trigger(sub);
+        // only update if the origin of the change isn't itself
+        if (!sourceguid || sourceguid !== sub.guid)
+            trigger(sub);
     });
 }
 
