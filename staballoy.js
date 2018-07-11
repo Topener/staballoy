@@ -208,9 +208,20 @@ function setVar(key, value, sourceguid) {
         return false;
     }
 
-    var toUpdate = _.where(subscribers, {
-        "var" : key
+    var options = [];
+    var parts = key.split('_');
+    var string = parts[0];
+    _.each(parts, function(p, i){
+        if (i > 0) string += '_' + p;
+        options.push(string);
     });
+    
+    var toUpdate = _.filter(subscribers, function(sub){
+        if (sub.var.indexOf(key) === 0) return true;
+        if (options.indexOf(sub.var) > -1) return true;
+        return false;
+    });
+    
     _.each(toUpdate, function(sub) {
         // only update if the origin of the change isn't itself
         if (!sourceguid || sourceguid !== sub.guid)
@@ -224,7 +235,6 @@ function setVar(key, value, sourceguid) {
  */
 function trigger(sub){
     var value = getVar(sub.var);
-    
     if (sub.logicFunction){
         value = sub.logicFunction(value, sub);
     }
