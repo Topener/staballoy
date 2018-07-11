@@ -55,13 +55,46 @@ You can `set` and `get` variables in any Alloy created controller, as it will ha
     
 Thats all you need to do to update variables. Again, if you want to store the data you should handle the storage of it, and init the right data when starting the app, in `alloy.js` for example, or better in a library file (eg. `/lib/initStaballoy.js`) called from `alloy.js`
 
+
+### Deep setting/getting
+
+If you're storing objects in variables, you can update them without having to get them first. For example, if you have this object:
+
+```js
+var config = {
+    "user": {
+        "preferences": {
+            "notifications": true,
+            "language": "en"
+        }
+    }
+}
+staballoy.setVar('config', config);
+```
+
+If you now want to update the language, you can do it like this:
+```js
+staballoy.setVar('config_user_preferences_language', 'de');
+```
+
+Same with getting it.
+```js
+staballoy.getVar('config_user_preferences_language');
+// results in "de"
+```
+
+You can even set properties on object trees that don't exist yet, and it will make the tree for you
+```js
+staballoy.setVar('config_user_info_name', 'myName');
+```
+
 ## Subscribe
 Any of the supported controllers will be automatically parsed and checked for subscriptions. These subscriptions can be configured in the tss file. Say we have a label
 
     <Label id="myLabel" />
     
 And you want to subscribe the text property to the variable `closeButtonName`. You can do that by putting the following in tss
-
+```
     "#myLabel": {
         staballoy: {
             subscriptions: {
@@ -69,10 +102,35 @@ And you want to subscribe the text property to the variable `closeButtonName`. Y
             }
         }
     }
+```
 
 The subscriptions object specifies what to subscribe to and to what attribute. In this example I am subscribing to the `closeButtonName` variable, and I want the `text` attribute to be set with the value that is contained in the variable. Multiple subscriptions are possible for every element.
 
 Internally, every time the `closeButtonName` variable is updated, the following code is executed: `$.myLabel.text = closeButtonName;`
+
+As with `setVar` and `getVar` you can also use deep-binding and it will get it from inside the object
+
+```
+    "#myLabel": {
+        staballoy: {
+            subscriptions: {
+                "config_user_info_name": "text"
+            }
+        }
+    }
+```
+
+## 2-way data-binding
+When you subscribe to a property with the value binding, it will automatically be 2-way. The tss sample below is of a textfield.
+
+```
+staballoy: {
+    subscriptions: {
+        "user_name": "value"
+    }
+},
+```
+So when the value of the textfield changes, using the `change` event, the `user_name` variable will be updated automatically as well. So when you bind it to a label somewhere else, that will update automatically too.
 
 ## Manual Subscribe
 If you don't want to subscribe in the tss but want to do it more dynamically, in the controller, you can do it as follows:
@@ -86,7 +144,7 @@ If you don't want to subscribe in the tss but want to do it more dynamically, in
 The object consists of:
 
 - **component** - The UI element you want updated
-- **window** - The window the UI element is in, this needs to be an alloy generated window, so usually `$` is enough
+- **window** - The window the UI element is in, this needs to be an alloy generated window, so usually `$` is enough. The window GUID is also accepted
 - **subscriptions** - As explained above.
 
 As you can see this flow is the same as the earlier one, but it is a little more complex as it needs to know the context.
@@ -98,7 +156,7 @@ Instead of using an attribute, you can also use the setters. So if you provide t
 
 This will internally be translated to: `$.myLabel.setText(closeButtonName)`
 
-### Manipulating the data that is being set
+## Manipulating the data that is being set
 So want to alter the data of the variable before it being set you can use the `logicFunction`. It can be really powerfull if you store objects in staballoy. You can do that as following:
 
 
@@ -122,7 +180,7 @@ In the manual approach you can, instead of a string to the `$` namespace, you ca
     
 Now, you can use part of an object to set the value of your UI component automatically. Another example for visibilty of an object based on an integer you can find in the sample app.
     
-### Subscribe in other controllers
+## Subscribe in other controllers
 
 The preferred method would be to pass the window GUID to the child controller, so you can pass the guid in the manual subscribe method inside a sub-controller
 
@@ -165,7 +223,7 @@ If you have any questions, just contact me on [TiSlack](http://tislack.org). My 
 Want to support my work? Consider supporting me on [Patreon](https://www.patreon.com/wraldpyk), or send a donation my way via the PayPal button on [TiSlack.org](http://tislack.org). Any support is appreciated.
 
 ## Changelog
-
+- **0.3.0** - (20180711) Added 2-way binding and deep-binding.
 - **0.2.4** - (20171205) Add the ability to manual subscribe with a guid instead of a window.
 - **0.2.3** - (20171030) Ignoring the setVar function call if the new value is the same as the stored one
 - **0.2.2** - (20171024) Subscriptions of top most element weren't processed. Now they are!
