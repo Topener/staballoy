@@ -1,13 +1,13 @@
 {
   "name": "staballoy",
   "description": "Reactive Library for binding data to UI elements in Titanium Alloy",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "main": "staballoy.js",
   "keywords": ["titanium","reactive","titanium-module"],
   "author": "Rene Pot",
   "repository": {
     "type": "git",
-    "url": "github.com/Topener/staballoy"
+    "url": "git+https://github.com/Topener/staballoy"
   },
   "bugs": {
     "url": "http://github.com/Topener/staballoy/issues"
