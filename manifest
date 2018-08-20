@@ -1,4 +1,4 @@
-version: 0.2.4
+version: 0.3.0
 description: Reactive Library for binding data to UI elements in Titanium Alloy
 author: Rene Pot
 license: Apache 2.0

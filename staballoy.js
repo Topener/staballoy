@@ -17,6 +17,8 @@ var currentlyFocussed = false;
 Alloy.createController = function(name, args) {
     var args = args || {};
     
+    if (Alloy.CFG.debug) console.log('creating controller in staballoy: ', name, args);
+    
     if (!requiredControllers[name]){
         requiredControllers[name] = require("/alloy/controllers/" + name);
     }
@@ -44,7 +46,6 @@ Alloy.createController = function(name, args) {
             currentlyFocussed = controllerGuid;
         }
     }
-    
     return controller;
 };
 
@@ -73,10 +74,16 @@ function parseChildren(children, controller){
  */
 function parseSubscriptions(elem, controller){
     if (!elem.staballoy.subscriptions || elem.staballoy.subscriptions.length == 0) return;
+    
+    // subscriptions have already been created. Don't do it again
+    if (elem.staballoy.guid) return;
+    
     _.each(elem.staballoy.subscriptions, function(attribute, variable){
-        
+        var subscriberId = elem.staballoy.guid || guid();
         // create a subscription model
-        var data = {"var": variable, "component": elem, "attribute": attribute, "window": controller.args.staballoy.guid};
+        var data = {"var": variable,  "component": elem, "attribute": attribute, "window": controller.args.staballoy.guid, guid: subscriberId};
+        elem.staballoy.guid = subscriberId;
+        
         if (elem.staballoy.logicFunction){
             if (typeof elem.staballoy.logicFunction == 'string'){
                 
@@ -87,10 +94,28 @@ function parseSubscriptions(elem, controller){
                 data.logicFunction = elem.staballoy.logicFunction;
             }
         }
+        
+        if (attribute === 'value'){
+          elem.addEventListener('change', valueChange);
+          data.valueListener = true;
+        }
+        
         trigger(data);
         subscribers.push(data);
     });       
 }    
+
+
+function valueChange(e) {
+    if (e.source && e.source.staballoy) {
+        _.each(e.source.staballoy.subscriptions, function(attribute, variable) {
+            if (attribute === 'value') {
+                setVar(variable, e.source.value, e.source.staballoy.guid);
+            }
+        });
+    }
+}
+
 
 /**
  * The in-controller exposed subscribe method
@@ -142,38 +167,75 @@ function handleClose(e){
 /**
  * remove all subscribers based on the GUID of a window
  */
-function removeSubscribersForWindow(guid){
-    var toRemove =  _.where(subscribers, {'window' : guid});
-    _.each(toRemove, function(r){
-        subscribers.splice(subscribers.indexOf(r), 1);
+
+function removeSubscribersForWindow(guid) {
+    var toRemove = _.where(subscribers, {
+        'window' : guid
+    });
+    _.each(toRemove, function(r) {
+        var removed = subscribers.splice(subscribers.indexOf(r), 1);
+        if (removed && removed[0] && removed[0].valueListener) {
+            removed[0].component.removeEventListener('value', valueChange);
+        }
     });
 }
 
 /**
  * Set variable in staballoy and trigger update throughout all subscribers
  */
-function setVar(key, value){
-    if (_.isEqual(getVar(key), value)){
+
+function setVar(key, value, sourceguid) {
+    function setVal(path, val) {
+        var schema = vars;
+        var pList = path.split('_');
+        var len = pList.length;
+        for (var i = 0; i < len - 1; i++) {
+            var elem = pList[i];
+            if (!schema[elem])
+                schema[elem] = {};
+            schema = schema[elem];
+        }
+
+        if (_.isEqual(getVar(path), value))
+            return false;
+
+        schema[pList[len - 1]] = val;
+        return true;
+    }
+
+    if (!setVal(key, value)) {
         return false;
     }
-    if (!vars.hasOwnProperty(key)) vars[key];
-    vars[key] = value;
+
+    var options = [];
+    var parts = key.split('_');
+    var string = parts[0];
+    _.each(parts, function(p, i){
+        if (i > 0) string += '_' + p;
+        options.push(string);
+    });
     
-    var toUpdate = _.where(subscribers, {"var" : key});
-    _.each(toUpdate, function(sub){
-        trigger(sub);
+    var toUpdate = _.filter(subscribers, function(sub){
+        if (sub.var.indexOf(key + '_') === 0) return true;
+        if (options.indexOf(sub.var) > -1) return true;
+        return false;
+    });
+    
+    _.each(toUpdate, function(sub) {
+        // only update if the origin of the change isn't itself
+        if (!sourceguid || sourceguid !== sub.guid)
+            trigger(sub);
     });
 }
+
 
 /**
  * Trigger a variable update
  */
 function trigger(sub){
-    
-    var value = vars[sub.var];
-    
+    var value = getVar(sub.var);
     if (sub.logicFunction){
-        value = sub.logicFunction(value);
+        value = sub.logicFunction(value, sub);
     }
     
     if (sub.attribute.indexOf('set') === 0){
@@ -186,10 +248,25 @@ function trigger(sub){
 /**
  * Get variable from staballoy
  */
-function getVar(key){
-    if (!vars.hasOwnProperty(key)) return null;
-    return vars[key];
+
+function getVar(key) {
+
+    function getVal(path) {
+        var schema = vars;
+        var pList = path.split('_');
+        var len = pList.length;
+        for (var i = 0; i < len - 1; i++) {
+            var elem = pList[i];
+            if (!schema[elem])
+                return false;
+            schema = schema[elem];
+        }
+        return _.clone(schema[pList[len - 1]]);
+    }
+
+    return getVal(key);
 }
+
 
 /**
  * Check if, based on ApiName, a subscription is allowed
