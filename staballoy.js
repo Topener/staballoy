@@ -1,6 +1,6 @@
 /**
  * Staballoy is created by Rene Pot (2017)
- * Version 0.2.4 -- 2017-12-05
+ * Version 0.3.3 -- 2018-09-05
  * It extends alloy to add reactive components to Titanium.
  * The latest version can be found at Github: https://github.com/topener/staballoy
  */
@@ -16,7 +16,6 @@ var currentlyFocussed = false;
  */
 Alloy.createController = function(name, args) {
     var args = args || {};
-    
     if (Alloy.CFG.debug) console.log('creating controller in staballoy: ', name, args);
     
     if (!requiredControllers[name]){
@@ -26,6 +25,10 @@ Alloy.createController = function(name, args) {
     args.staballoy = {setVar: setVar, getVar: getVar, guid: controllerGuid};
     args.subscribe = subscribe;
     var controller = new (requiredControllers[name])(args);
+
+    // ignoring this controller as it has no xml elements
+    if (!controller.getView()) return controller;
+
     controller.getView().guid = controllerGuid;
     
     // only parse through all subscribable components

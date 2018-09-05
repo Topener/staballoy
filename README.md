@@ -223,6 +223,7 @@ If you have any questions, just contact me on [TiSlack](http://tislack.org). My 
 Want to support my work? Send a donation my way via the PayPal button on [TiSlack.org](http://tislack.org). Any support is appreciated.
 
 ## Changelog
+- **0.3.3** - (20180905) Fixed issue where creating empty controllers crashed the app 
 - **0.3.0** - (20180711) Added 2-way binding and deep-binding.
 - **0.2.4** - (20171205) Add the ability to manual subscribe with a guid instead of a window.
 - **0.2.3** - (20171030) Ignoring the setVar function call if the new value is the same as the stored one
