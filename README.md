@@ -19,6 +19,8 @@ It has the Titanium in it, is an alloy and uranium is a reactive metal. Sounds l
 Staballoy maintains an object of data, stored in `Ti.App.Properties`, any alteration in this data (by setting new properties) will cause the library to find any UI elements that need updating automatically. 
 ## Setup
 
+*Alpha setup: copy staballoy.js to your lib directory, and then install the dependencies listed in `package.json` manually*
+
 So enough talk, how do I install it? For **Alloy** projects go to the `lib` directory of your project, then run the following command `npm i staballoy`.
 
 _Note: if your app doesn't have `node_modules` yet, run `npm init` first!_
