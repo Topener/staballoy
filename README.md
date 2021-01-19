@@ -64,6 +64,7 @@ To enable an entire controller at once, add this to the Alloy tag.
 Once this is set, dive into your `tss` and add subscriptions, using a path to the property you want to set it to, and the property you want to update. 
 
 **Example 1**
+
 You want to set the color and text property of a `<Label>` based on a user profile:
 
 ```xml
