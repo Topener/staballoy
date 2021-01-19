@@ -29,7 +29,7 @@ _Note: if your app doesn't have `node_modules` yet, run `npm init` first!_
 
 Staballoy stores all data in a single `Ti.App.Properties` object, so anything you set will add to this dataset. Staballoy automatically deep-merges the data you set, so you do not have to worry about overwriting/losing data if you do not include the already set data.
 
-**Setting data**
+### Setting data
 To set data in staballoy, all you need to do is call the `set` method and provide any data you want to **add** to the dataset
 
 ```js
@@ -38,7 +38,7 @@ require('staballoy').set(object);
 
 An automatic deep merge will be initiated on the data you set.
 
-**Getting data**
+### Getting data
 To get all the data currently set in the staballoy storage, call the `get` method
 
 ```js
@@ -54,6 +54,7 @@ const data = require('staballoy').get('my.nested.property');
 This will return `Hello, World!` when the data has been set as `{my: { nested: { property: "Hello, World!"}}}`.
 
 ## Subscribe
+
 Of course the most important feature is subscribing to any data you have set. To enable subscribing all you need to do is add the `module="staballoy"` tag to any UI element you want to have support for this. 
 
 
@@ -70,8 +71,7 @@ To enable an entire controller at once, add this to the Alloy tag.
 
 Once this is set, dive into your `tss` and add subscriptions, using a path to the property you want to set it to, and the property you want to update. 
 
-**Example 1**
-
+### Example 1
 You want to set the color and text property of a `<Label>` based on a user profile:
 
 ```xml
