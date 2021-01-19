@@ -10,6 +10,11 @@ It has the Titanium in it, is an alloy and uranium is a reactive metal. Sounds l
 *## NOTE*
 *Version 1.0.0 introduced massive breaking changes as opposed to any 0.x version. Staballoy also no longer overrides the `Alloy.createController` method and therefore is completely compatible with any other framework.*
 
+
+| :exclamation:  **ALPHA VERSION**. There currently is NO garbage collection implemented  |
+|-----------------------------------------------------------------------------------------|
+| Use at own risk  |
+
 ## How does it work?
 Staballoy maintains an object of data, stored in `Ti.App.Properties`, any alteration in this data (by setting new properties) will cause the library to find any UI elements that need updating automatically. 
 ## Setup
