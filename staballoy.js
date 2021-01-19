@@ -76,7 +76,13 @@ exports.set = function(newData) {
     handleChange();
 }
 
+exports.reset = function(newData) {
+    data = newData;
+    Ti.App.Properties.setObject('Staballoy.DataSub', data);
+    handleChange();
+}
+
 exports.get = function(prop) {
     if (!prop) return data;
     return data[prop];
-};
+}
