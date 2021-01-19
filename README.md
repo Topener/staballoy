@@ -1,6 +1,10 @@
 # Staballoy
 Reactive UI framework for Titanium Alloy with event handling
 
+| :exclamation:  **ALPHA VERSION**. There currently is NO garbage collection implemented :exclamation:  |
+|------------------------|
+| Use at own risk  |
+
 Why the name staballoy? Well.. to quote wikipedia
 
 > staballoys are metal alloys of a high proportion of depleted uranium with other metals, usually titanium
@@ -10,11 +14,6 @@ It has the Titanium in it, is an alloy and uranium is a reactive metal. Sounds l
 | :warning:  Breaking changes :warning:  |
 |------------------------|
 | Version 1.0.0 introduced massive breaking changes as opposed to any 0.x version. Staballoy also no longer overrides the `Alloy.createController` method and therefore is completely compatible with any other framework. |
-
-
-| :exclamation:  **ALPHA VERSION**. There currently is NO garbage collection implemented :exclamation:  |
-|------------------------|
-| Use at own risk  |
 
 ## How does it work?
 Staballoy maintains an object of data, stored in `Ti.App.Properties`, any alteration in this data (by setting new properties) will cause the library to find any UI elements that need updating automatically. 
