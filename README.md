@@ -41,7 +41,7 @@ const data = require('staballoy').get();
 The `get` method has an optional argument, if you provide this argument you can return a subset of the data. A deep search is performed to get this property, so you can provide a path to the property you want to fetch.
 
 ```js
-const data = require('staballoy').get('my.nested.property);
+const data = require('staballoy').get('my.nested.property');
 ```
 
 This will return `Hello, World!` when the data has been set as `{my: { nested: { property: "Hello, World!"}}}`.
