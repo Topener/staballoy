@@ -11,8 +11,8 @@ It has the Titanium in it, is an alloy and uranium is a reactive metal. Sounds l
 *Version 1.0.0 introduced massive breaking changes as opposed to any 0.x version. Staballoy also no longer overrides the `Alloy.createController` method and therefore is completely compatible with any other framework.*
 
 
-| :exclamation:  **ALPHA VERSION**. There currently is NO garbage collection implemented  |
-|-----------------------------------------------------------------------------------------|
+| :exclamation:  **ALPHA VERSION**. There currently is NO garbage collection implemented :exclamation:  |
+|------------------------|
 | Use at own risk  |
 
 ## How does it work?
