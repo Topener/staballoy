@@ -6,25 +6,67 @@
  */
 
 let data = Ti.App.Properties.getObject('Staballoy.DataSub', {});
-let subscriptions = [];
+let subscriptions = {};
+let debug = false;
 const deepmerge = require('deepmerge');
 
 function handleChange() {
     let changes = 0;
-    subscriptions.forEach(sub => {
+    Object.keys(subscriptions).forEach(sub => {
         changes += parseSubscriptions(sub.UI);
     });
-    console.log(`${changes} changes in subscriptions`);
+    log(`${changes} changes in subscriptions`);
 }
 
 function createSubscription(type, args) {
     let UI = Ti.UI[type](args);
     if (!args.hasOwnProperty('staballoy')) return UI;
-    
+    log('creating new subscription');
+    UI.addEventListener('postlayout', PLHandler);
+    UI.staballoyGuid = guid();
     let sub = {UI: UI, subscription: args.staballoy};
     parseSubscriptions(UI);
-    subscriptions.push(sub);
+    subscriptions[UI.staballoyGuid] = sub;
     return UI;
+}
+
+function PLHandler(e) {
+    // sanity check
+    if (!e.source.hasOwnProperty('staballoyGuid')) return false;
+    let parentWindow = findParentWindow(e.source);
+    if (parentWindow) {
+        subscriptions[e.source.staballoyGuid].parentWindow = parentWindow;
+        subscriptions[e.source.staballoyGuid].UI.removeEventListener('postlayout', PLHandler);
+    }
+}
+
+function findParentWindow(el) {
+    if (el.apiName !== 'Ti.UI.Window' && el.parent) return findParentWindow(el.parent);
+    if (el.apiName === 'Ti.UI.Window' && el.hasOwnProperty('staballoyGuid')) return el.staballoyGuid;
+    if (el.apiName === 'Ti.UI.Window' && !el.hasOwnProperty('staballoyGuid')) {
+        el.staballoyGuid = guid();
+        el.addEventListener('close', handleWindowClose);
+        log(`Found new window ${el.staballoyGuid}. Added monitoring`);
+        return el.staballoyGuid;
+    }
+    return false;
+}
+
+function handleWindowClose(e) {
+    e.source.removeEventListener('close', handleWindowClose);
+    if (!e.source.staballoyGuid) return;
+    let changes = 0;
+    Object.keys(subscriptions).forEach(key => {
+        if (subscriptions[key].hasOwnProperty('parentWindow') && subscriptions[key].parentWindow === e.source.staballoyGuid) {
+            // remove just in case
+            subscriptions[key].UI.removeEventListener('postlayout', PLHandler);
+            // remove subscription entirely
+            delete subscriptions[key];
+            changes++;
+        }
+    });
+
+    log(`cleaned up ${changes} subscriptions because of closing window ${e.source.staballoyGuid}`);
 }
 
 function parseSubscriptions(UI) {
@@ -60,7 +102,7 @@ function find(obj, path) {
         }
         return obj;
     } catch (e) {
-        console.warn(`Subscription path ${path} not found`)
+        log(`Subscription path ${path} not found`)
         return;
     }
 }
@@ -84,5 +126,26 @@ exports.reset = function(newData) {
 
 exports.get = function(prop) {
     if (!prop) return data;
-    return data[prop];
+    return find(data, prop);
+};
+
+exports.setDebug = function(state) {
+    debug = typeof state === 'boolean' ? state : false;
+}
+
+// helpers
+
+/**
+ * Method to get a unique GUID (from Alloy source code)
+ */
+function guid() {
+    function S4() {
+        return (65536 * (1 + Math.random()) | 0).toString(16).substring(1);
+    }
+
+    return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
+}
+
+function log(value) {
+    if (debug) console.log('[staballoy]', value);
 }

@@ -1,7 +1,7 @@
 # Staballoy
 Reactive UI framework for Titanium Alloy with event handling
 
-| :exclamation:  **ALPHA VERSION**. There currently is NO garbage collection implemented :exclamation:  |
+| :exclamation:  **ALPHA VERSION**. |
 |------------------------|
 | Use at own risk  |
 
@@ -94,7 +94,13 @@ Then setting that data in staballoy is simple:
 require('staballoy').set({user: {name: "John Doe", color: "#6F2E25"}});
 ```
 
-This will automatically change the color and text of the Label, on the fly. 
+This will automatically change the color and text of the Label, on the fly.
+
+## Debug
+Want to get more logging? Enable debug mode! Add this line to `alloy.js` and you should be good
+```js
+require('staballoy').setDebug(true);
+```
 
 **Any UI property that is not creation- or read-only is supported. Most UI elements are supported too**
 # Missing features / bugs / questions?
@@ -105,6 +111,7 @@ If you have any questions, just contact me on [TiSlack](http://tislack.org). My 
 Want to support my work? Send a donation my way via the Ko-Fi button on [TiSlack.org](http://tislack.org). Any support is appreciated.
 
 ## Changelog
+- **1.0.1** - (20210127) Added garbage-collection and debug mode
 - **1.0.0** - (20210119) Complete rewrite of the module
 - **0.3.3** - (20180905) Fixed issue where creating empty controllers crashed the app 
 - **0.3.0** - (20180711) Added 2-way binding and deep-binding.
