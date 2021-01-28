@@ -1,6 +1,6 @@
 /**
  * Staballoy is created by Rene Pot (2021)
- * Version 1.0.1 -- 2021-01-28
+ * Version 1.0.3 -- 2021-01-28
  * The latest version can be found at Github: https://github.com/topener/staballoy
  * Or npmjs: https://www.npmjs.com/package/staballoy
  */
@@ -74,7 +74,7 @@ function parseSubscriptions(UI) {
     if (!UI || !UI.staballoy) return 0;
     Object.keys(UI.staballoy).forEach((key) => {
         let res = find(data, UI.staballoy[key]);
-        if (res) {
+        if (res !== undefined) {
             if (key.indexOf('set') === 0) {
                 UI[key](res);
             }
