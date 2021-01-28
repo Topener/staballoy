@@ -1,4 +1,4 @@
-version: 1.0.1
+version: 1.0.2
 description: Reactive Library for binding data to UI elements in Titanium Alloy
 author: Rene Pot
 license: Apache 2.0
@@ -7,4 +7,4 @@ name: staballoy
 moduleid: staballoy
 guid: 9da4b5b3-4045-4c5b-a6b6-839145b65b6e
 platform: commonjs
-minsdk: 9.3.0.GA
+minsdk: 9.0.0.GA
