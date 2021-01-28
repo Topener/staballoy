@@ -1,6 +1,0 @@
-<Alloy>
-	<Window>
-		<TextField id="newItemTitle"></TextField>
-		<Button id="submitItemButton" onClick="submitItem"></Button>
-	</Window>
-</Alloy>
