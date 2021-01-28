@@ -71,7 +71,7 @@ function handleWindowClose(e) {
 
 function parseSubscriptions(UI) {
     let changes = 0;
-    if (!UI.hasOwnProperty('staballoy')) return 0;
+    if (!UI || !UI.staballoy) return 0;
     Object.keys(UI.staballoy).forEach((key) => {
         let res = find(data, UI.staballoy[key]);
         if (res) {
