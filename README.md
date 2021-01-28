@@ -1,10 +1,6 @@
 # Staballoy
 Reactive UI framework for Titanium Alloy with event handling
 
-| :exclamation:  **ALPHA VERSION**. |
-|------------------------|
-| Use at own risk  |
-
 Why the name staballoy? Well.. to quote wikipedia
 
 > staballoys are metal alloys of a high proportion of depleted uranium with other metals, usually titanium
