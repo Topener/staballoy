@@ -112,7 +112,7 @@ If you have any questions, just contact me on [TiSlack](http://tislack.org). My 
 Want to support my work? Send a donation my way via the Ko-Fi button on [TiSlack.org](http://tislack.org). Any support is appreciated.
 
 ## Changelog
-- **1.0.3** - (20210128) Fixed property search when property value was falsy
+- **1.0.4** - (20210128) Fixed property search when property value was falsy
 - **1.0.1** - (20210127) Added garbage-collection and debug mode
 - **1.0.0** - (20210119) Complete rewrite of the module
 - **0.3.3** - (20180905) Fixed issue where creating empty controllers crashed the app 

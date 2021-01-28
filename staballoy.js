@@ -1,6 +1,6 @@
 /**
  * Staballoy is created by Rene Pot (2021)
- * Version 1.0.3 -- 2021-01-28
+ * Version 1.0.4 -- 2021-01-28
  * The latest version can be found at Github: https://github.com/topener/staballoy
  * Or npmjs: https://www.npmjs.com/package/staballoy
  */
@@ -13,7 +13,7 @@ const deepmerge = require('deepmerge');
 function handleChange() {
     let changes = 0;
     Object.keys(subscriptions).forEach(sub => {
-        changes += parseSubscriptions(sub.UI);
+        changes += parseSubscriptions(subscriptions[sub].UI);
     });
     log(`${changes} changes in subscriptions`);
 }
