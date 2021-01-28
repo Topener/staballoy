@@ -1,6 +1,6 @@
 /**
- * Staballoy is created by Rene Pot (2017)
- * Version 1.0.0 -- 2021-01-19
+ * Staballoy is created by Rene Pot (2021)
+ * Version 1.0.1 -- 2021-01-28
  * The latest version can be found at Github: https://github.com/topener/staballoy
  * Or npmjs: https://www.npmjs.com/package/staballoy
  */
