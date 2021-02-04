@@ -1,6 +1,6 @@
 /**
  * Staballoy is created by Rene Pot (2021)
- * Version 1.0.4 -- 2021-02-04
+ * Version 1.0.3 -- 2021-01-28
  * The latest version can be found at Github: https://github.com/topener/staballoy
  * Or npmjs: https://www.npmjs.com/package/staballoy
  */
@@ -25,18 +25,23 @@ function createSubscription(type, args) {
     UI.addEventListener('postlayout', PLHandler);
     UI.staballoyGuid = guid();
     let sub = {UI: UI, subscription: args.staballoy};
-    parseSubscriptions(UI);
     subscriptions[UI.staballoyGuid] = sub;
+    parseSubscriptions(UI);
     return UI;
 }
 
 function PLHandler(e) {
-    // sanity check
     if (!e.source.hasOwnProperty('staballoyGuid')) return false;
     let parentWindow = findParentWindow(e.source);
     if (parentWindow) {
         subscriptions[e.source.staballoyGuid].parentWindow = parentWindow;
         subscriptions[e.source.staballoyGuid].UI.removeEventListener('postlayout', PLHandler);
+        if (subscriptions[e.source.staballoyGuid].pendingEvents) {
+            subscriptions[e.source.staballoyGuid].pendingEvents.forEach((event) => {
+                event.source.fireEvent('transform', event);
+            });
+            delete subscriptions[e.source.staballoyGuid].pendingEvents;
+        }
     }
 }
 
@@ -82,7 +87,21 @@ function parseSubscriptions(UI) {
 
         if (res !== undefined) {
             if (typeof UI.staballoy[key] === 'object' && UI.staballoy[key].transform) {
-                return UI.fireEvent('transform', {value: res, source: UI});
+                let timeout = 0;
+                if (!subscriptions[UI.staballoyGuid].hasOwnProperty('parentWindow')) {
+
+                    if (!subscriptions[UI.staballoyGuid].hasOwnProperty('pendingEvents')) {
+                        subscriptions[UI.staballoyGuid].pendingEvents = [];
+                    }
+
+                    return subscriptions[UI.staballoyGuid].pendingEvents.push({
+                        key: key,
+                        value: res,
+                        source: UI
+                    })
+                }
+
+                return UI.fireEvent('transform', {value: res, source: UI, key: key});
             }
             if (key.indexOf('set') === 0) {
                 UI[key](res);
