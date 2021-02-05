@@ -7,7 +7,7 @@ Why the name staballoy? Well.. to quote wikipedia
 
 It has the Titanium in it, is an alloy and uranium is a reactive metal. Sounds like the perfect name to me.
 
-| :warning:  Breaking changes :warning:  |
+| :warning:  Breaking changes |
 |------------------------|
 | Version 1.0.0 introduced massive breaking changes as opposed to any 0.x version. Staballoy also no longer overrides the `Alloy.createController` method and therefore is completely compatible with any other framework. |
 
@@ -70,9 +70,9 @@ To enable an entire controller at once, add this to the Alloy tag.
 <Alloy module="staballoy">
 ```
 
-Once this is set, dive into your `tss` and add subscriptions, using a path to the property you want to set it to, and the property you want to update. 
+Once this is set, dive into your `tss` and add subscriptions, using a path to the property you want to set it to, and the property you want to update. There are 2 methods of subscribing, simple or with a transform method.
 
-### Example 1
+### Simple Subscribe
 You want to set the color and text property of a `<Label>` based on a user profile:
 
 ```xml
@@ -95,7 +95,47 @@ Then setting that data in staballoy is simple:
 require('staballoy').set({user: {name: "John Doe", color: "#6F2E25"}});
 ```
 
-This will automatically change the color and text of the Label, on the fly.
+This will automatically change the color and text of the Label, on the fly, and anything you set is stored so you only need to do this once.
+
+### Subscribing with dataTransform
+If you want to tranform the data prior to setting it, you can add the transform method to the subscription. We're taking the example above and altering it to support transformation.
+
+First, in tss set transform to true this way:
+```js
+"#myLabel": {
+    staballoy: {
+        text: {
+            value: "user.name",
+            transform: true
+        },
+        color: "user.favoriteColor"
+    }
+}
+```
+
+This will disable staballoy to automatically set the text value for you, but it will still automatically set the color. Instead it will trigger the tranform event on the UI element. So, time to subscribe to the UI element.
+
+```xml
+<Label id="myLabel" module="staballoy" onTransform="handleLabelTransform" />
+```
+
+And then in the controller you need to create your transform handler:
+
+```js
+function handleLabelTransform(e) {
+    e.source[e.key] = e.value;
+}
+```
+
+As you can see, the event contains the source, the key of what needs changing, and the value. In our situation the source is the `<Label>`, the key is `text` and the value is `John Doe`. But now you can do anything you want with the value you wish, just don't forget to apply the property to the UI element as Staballoy **won't do this automatically** anymore.
+
+For example you now could do this:
+
+```js
+function handleLabelTransform(e) {
+    e.source[e.key] = `Your name is: + ${e.value}`
+}
+```
 
 ## Debug
 Want to get more logging? Enable debug mode! Add this line to `alloy.js` and you should be good
@@ -109,9 +149,10 @@ For missing features and bugs, please submit a ticket, or even better submit a P
 
 If you have any questions, just contact me on [TiSlack](http://tislack.org). My name there is @Wraldpyk.
 
-Want to support my work? Send a donation my way via the Ko-Fi button on [TiSlack.org](http://tislack.org). Any support is appreciated.
+Want to support my work? Send a donation my way via the Ko-Fi button on [TiSlack.org](https://tislack.org). Any support is appreciated.
 
 ## Changelog
+- **1.1.0** - (20210205) Added ability to add a dataTransform to subscription
 - **1.0.4** - (20210128) Fixed property search when property value was falsy
 - **1.0.1** - (20210127) Added garbage-collection and debug mode
 - **1.0.0** - (20210119) Complete rewrite of the module
