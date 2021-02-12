@@ -1,7 +1,7 @@
 {
   "name": "staballoy",
   "description": "Reactive Library for binding data to UI elements in Titanium Alloy",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "staballoy.js",
   "keywords": ["titanium","reactive","titanium-module"],
   "author": "Rene Pot",

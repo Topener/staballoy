@@ -1,6 +1,6 @@
 /**
  * Staballoy is created by Rene Pot (2021)
- * Version 1.1.0 -- 2021-02-05
+ * Version 1.1.1 -- 2021-02-12
  * The latest version can be found at Github: https://github.com/topener/staballoy
  * Or npmjs: https://www.npmjs.com/package/staballoy
  */
@@ -141,7 +141,8 @@ supportedUI.forEach(el => {
 });
 
 exports.set = function(newData) {
-    data = deepmerge(data, newData);
+    const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
+    data = deepmerge(data, newData, { arrayMerge: overwriteMerge });
     Ti.App.Properties.setObject('Staballoy.DataSub', data);
     handleChange();
 }
