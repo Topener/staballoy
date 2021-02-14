@@ -1,10 +1,6 @@
 # Staballoy
 State Manager & Reactive UI framework for Titanium Alloy with event handling
 
-| :warning:  Breaking changes |
-|------------------------|
-| Version 1.0.0 introduced massive breaking changes as opposed to any 0.x version. Staballoy also no longer overrides the `Alloy.createController` method and therefore is completely compatible with any other framework. |
-
 ## How does it work?
 Staballoy maintains an object of data, stored in `Ti.App.Properties`, any alteration in this data (by setting the state) will cause the library to find any UI elements that need updating automatically. 
 ## Setup
