@@ -144,7 +144,7 @@ If you have any questions, just contact me on [TiSlack](http://tislack.org). My 
 Want to support my work? Send a donation my way via the Ko-Fi button on [TiSlack.org](https://tislack.org). Any support is appreciated.
 
 ## Changelog
-- **1.1.1** - (20210212) Arrays no longer merge, but they overwrite
+- **1.1.2** - (20210212) Arrays no longer merge, but they overwrite
 - **1.1.0** - (20210205) Added ability to add a dataTransform to subscription
 - **1.0.4** - (20210128) Fixed property search when property value was falsy
 - **1.0.1** - (20210127) Added garbage-collection and debug mode
