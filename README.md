@@ -1,27 +1,23 @@
 # Staballoy
-Reactive UI framework for Titanium Alloy with event handling
-
-Why the name staballoy? Well.. to quote wikipedia
-
-> staballoys are metal alloys of a high proportion of depleted uranium with other metals, usually titanium
-
-It has the Titanium in it, is an alloy and uranium is a reactive metal. Sounds like the perfect name to me.
+State Manager & Reactive UI framework for Titanium Alloy with event handling
 
 | :warning:  Breaking changes |
 |------------------------|
 | Version 1.0.0 introduced massive breaking changes as opposed to any 0.x version. Staballoy also no longer overrides the `Alloy.createController` method and therefore is completely compatible with any other framework. |
 
 ## How does it work?
-Staballoy maintains an object of data, stored in `Ti.App.Properties`, any alteration in this data (by setting new properties) will cause the library to find any UI elements that need updating automatically. 
+Staballoy maintains an object of data, stored in `Ti.App.Properties`, any alteration in this data (by setting the state) will cause the library to find any UI elements that need updating automatically. 
 ## Setup
 
-So enough talk, how do I install it? For **Alloy** projects go to the `lib` directory of your project, then run the following command `npm i staballoy`.
+So how do I install it? For **Alloy** projects go to the `lib` directory of your project (`app/lib`), then run the following command `npm i staballoy` for **Webpack** projects run the npm install in your app root.
 
-_Note: if your app doesn't have `node_modules` yet, run `npm init` first!_
+_Note: if your Alloy app doesn't have `node_modules` yet, run `npm init` first!_
 
 ## Getting/Setting data
 
 Staballoy stores all data in a single `Ti.App.Properties` object, so anything you set will add to this dataset. Staballoy automatically deep-merges the data you set, so you do not have to worry about overwriting/losing data if you do not include the already set data.
+
+_Note: Setting an array will not merge the existing array in the same place, array's overwrite_
 
 ### Setting data
 To set data in staballoy, all you need to do is call the `set` method and provide any data you want to **add** to the dataset
